@@ -1,0 +1,5 @@
+div id="Tjena"
+  h1 USER, PASS, MAIL
+  - for user in @users
+      - grabben = "#{user.username},#{user.password},#{user.email}"
+      h1 = grabben

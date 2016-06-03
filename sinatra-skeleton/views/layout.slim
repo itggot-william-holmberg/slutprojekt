@@ -1,0 +1,175 @@
+doctype html
+html
+  head
+    title Application
+    link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" /
+    script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"
+    script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+    link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" /
+    link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+    link rel="stylesheet" type='text/css' href="/css/loginStyle.css"
+    link href='https://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'
+    script type="text/javascript" src="/js/script.js"
+    script type="text/javascript" src="/js/jquery.leanModal.min.js"  body
+    link rel="stylesheet" type='text/css' href="/css/style.css"
+
+
+    - if @failed
+      script wrongPassword()
+
+    div id="header"
+        div id="logo_box"
+          a href="/"
+            img id="logo_img" src="/images/reallogo.png"
+        - if !@user
+          div class="menu_box"
+            a id="modal_trigger" href="#modal" class="header_btn"Login
+          div id="modal" class="popupContainer" style="display:none"
+            header class="popupHeader"
+              span class="header_title"Login
+              //span class="modal_close"
+                i class="fa fa-times"
+            section class="popupBody"
+              div class="social_login"
+                div class=""
+                  a href="#" class="social_box fb"
+                    span class="icon"
+                     i class="fa fa-facebook"
+                    span class="icon_title" Connect with Facebook
+                  a href="#" class="social_box google"
+                    span class="icon"
+                      i class="fa fa-google-plus"
+                    span class="icon_title" Connect with Google
+                div class="centeredText"
+                  span Or use your Email address
+                div class="action_btns"
+                  div class="one_half"
+                    a href="#" id="login_form" class="btn"Login
+                  div class="one_half last"
+                    a href="#" id="register_form" class="btn"Register
+              div class="user_login"
+                form id="real_login_form" action="/login" method="post"
+                  label Email / Username
+                  input type="text" name="username"aria-required="true"
+                  br
+
+                  label Password
+                  input type="password" name="password"
+                  br
+
+                  div class="checkbox"
+                    input id="remember" type="checkbox"
+                    label for="remember" Remember me on this computer
+
+                  div class="action_btns"
+                    div class="one_half"
+                      a href="#" class="btn back_btn"
+                        i class="fa fa-angle-double-left" Back
+                    div class="one_half last"
+                      a href="#" id="login_button"class="btn btn_red" Login
+              div class="user_register"
+                form id="register_new" action="/user/new" method="post"
+                  label Username
+                  input class="register_item" type="text" name="username" required=""
+                  br
+
+                  label Email Address
+                  input class="register_item" type="email" name="email" required=""
+                  br
+
+                  label Password
+                  input class="register_item" type="password" name="password" required=""
+                  br
+
+                  div class="checkbox"
+                    input id="send_updates" type="checkbox"
+                    label for="send_updates" Send me occasional email updates
+
+                  div class="action_btns"
+                    div class="one_half"
+                      a href="#" class="btn back_btn"
+                        i class="fa fa-angle-double-left" Back
+                    div class="one_half last"
+                      a href="/#" id="register_button" class="btn btn_red"Register
+        - else
+          div class="menu_box"
+            a id="logout" href="/logout" class="header_btn"Logout
+            a id="calendar_btn" class ="header_btn" href="/calendar/" Calendar
+
+
+javascript: type="text/javascript"
+  $("#modal_trigger").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
+
+
+  $(function(){
+    // Calling Login Form
+
+
+    $("#login_form").click(function(){
+      $(".social_login").hide();
+      $(".user_login").show();
+      return false;
+    });
+
+    $(".register_item").change(function () {
+      var shouldSubmit = true;
+      $(".register_item").each(function () {
+        if ($(this).val().length < 4) {
+          $("#register_button").css({opacity: 0.5})
+          shouldSubmit = false;
+        }
+      });
+      if (shouldSubmit) {
+        $("#register_button").css({"background-color": "blue"})
+      }
+      return false;
+    });
+    // Calling Register Form
+    $("#register_form").click(function(){
+      $(".social_login").hide();
+      $(".user_register").show();
+      $(".header_title").text('Register');
+      return false;
+    });
+
+    $("#register_test").click(function () {
+      $(".social_login").hide();
+      $(".user_login").show();
+      return false;
+    });
+
+    // Going back to Social Forms
+    $(".back_btn").click(function(){
+      $(".user_login").hide();
+      $(".user_register").hide();
+      $(".social_login").show();
+      $(".header_title").text('Login');
+      return false;
+    });
+
+    // Send register "submit"
+      $("#register_button").click(function () {
+        var shouldSubmit = true;
+        $(".register_item").each(function() {
+          if ($(this).val().length < 4){
+            $(this).css({"background-color": "red"})
+            shouldSubmit = false;
+          }
+        });
+        if(shouldSubmit){
+          $("#register_new").submit();
+        }
+        return false;
+      });
+
+    $("#login_button").click(function () {
+        $("#real_login_form").submit();
+    });
+
+
+  })
+
+
+
+
+==yield
