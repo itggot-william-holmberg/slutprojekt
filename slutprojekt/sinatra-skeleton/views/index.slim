@@ -1,0 +1,56 @@
+div class="container"
+  div class="top_container"
+    div class="zlatan_and_text_container"
+      div class="zlatan_container"
+        img src="/images/zlatan.png"
+      div class="text_container"
+        h1 style="font-size: 600%" Mosulo
+        h3 style="font-size: 400%" Schedule your life!
+  div class="bot_container"
+    div class="first_page_todo_container"
+      div class="todo_header"
+        div class="first_page_add_todo"
+          form action="/newTemporaryCategory/" method="post"
+            input class="add_todo_form_index" type="text" name="message" placeholder="                   add a to-do"
+      - for category in @temporary_user.categories
+        div class="first_page_todo"
+          div class="todo_item_header"
+            div class="todo_title"
+              h1=category.name
+            div class="delete_todo"
+              form name="removeForm" action="/temporaryCategory/#{category.id}/remove" method="post"
+                input class="remove_form_button" type="submit" value="-"
+
+          div class="todos"
+            - for item in category.items
+              div class="todo_item"
+                div class="todo_item_content"
+                  div class="item_checkbox"
+                  /might come in the future bro
+                  div class="item_text_content"
+                    a class="item_text"=item.name
+                  div class="delete_item"
+                    form name="removeItem" action="/item/#{item.id}/remove" method="post"
+                      input class="remove_item_button"type="submit" value="-"
+                  div class="clear"
+            div id="add_item_div_#{category.id}" class="add_item_div"
+              form action="/category/#{category.id}/item/create" method="post"
+                input class="add_item_form" type="text" name="message" placeholder="                  add item"
+
+            div class="add_item"
+              h1 onClick="showAddItemDiv(#{category.id})" class="plus" +
+    div class="gif_container"
+      img src="/images/first_gif.gif"
+
+    javascript: type = "text/javascript"
+      $(function(){
+        // Calling Login Form
+        $(".mdl-badge").click(function () {
+          $(".mdl-active").removeClass('mdl-active').addClass('mdl-badge');
+          $(this).removeClass('mdl-badge').addClass('mdl-active');
+          var id = $(this).attr('id');
+          var formId = "form_"+id;
+          $("#"+formId).submit();
+          return false;
+        });
+      })

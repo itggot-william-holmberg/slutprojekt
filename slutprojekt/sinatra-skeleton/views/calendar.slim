@@ -1,0 +1,110 @@
+div id="calendar_div"
+  div class="month"
+    ul
+      li
+        a href="/calendar/#{@year.year}/#{@month.name}/#{@current_day.mday}/prevmonth" class="prev" &#10094;
+      li
+        a href="/calendar/#{@year.year}/#{@month.name}/#{@current_day.mday}/nextmonth" class="next" &#10095;
+      li
+        span class="year" style="font-size:18px" ="#{@month.name} #{@year.year}"
+  ul class="weekdays"
+    li Mo
+    li Tu
+    li We
+    li Th
+    li Fr
+    li Sa
+    li Su
+  - first_time = true
+  ul class="days"
+    - for day in @month_days
+
+      -events = UserCategory.all(:user_id => @user.id, :day_id => day.id)
+      - tooltip = []
+      -for event in events
+        - tooltip << event.category.name
+
+      -if first_time
+        - if day.wday == "Sunday"
+          - 6.times
+            li
+              div class="calendar_div"
+        - else
+          - (day.wday.to_i-1).times
+            li
+              div class="calendar_div"
+      - first_time = false
+      li
+        div class="calendar_div"
+          - if @current_day == day
+            - if events && events.length > 0
+              span data-toggle="tooltip" title="#{tooltip}" id="#{day.id}" data-badge="#{UserCategory.all(:user_id => @user.id, :day_id => day.id).length}" class="mdl-active" = day.mday
+              form id="form_#{day.id}" action="/calendar/#{@year.year}/#{@month.name}/#{day.mday}/"
+            - else
+              span data-toggle="tooltip" title="#{tooltip}" id="#{day.id}"  class="mdl-active" = day.mday
+              form id="form_#{day.id}" action="/calendar/#{@year.year}/#{@month.name}/#{day.mday}/"
+
+          - else
+            - if events && events.length > 0
+              span data-toggle="tooltip" title="#{tooltip}" id="#{day.id}" data-badge="#{UserCategory.all(:user_id => @user.id, :day_id => day.id).length}" class="mdl-badge" = day.mday
+              form id="form_#{day.id}" action="/calendar/#{@year.year}/#{@month.name}/#{day.mday}/"
+
+            - else
+              span data-toggle="tooltip" title="#{tooltip}"id="#{day.id}" class="mdl-badge" = day.mday
+              form id="form_#{day.id}" action="/calendar/#{@year.year}/#{@month.name}/#{day.mday}/"
+
+- if @current_day
+  div class="container"
+    div class="todo_container"
+      div class="todo_header"
+        div class="add_todo"
+          form action="/newCategory/#{@current_day.id}" method="post"
+            input class="add_todo_form" type="text" name="message" placeholder="               add a to-do"
+            // might add this in the future. input class="repeat_form" type="text" name="repeat" placeholder="           Repeat x times"
+            input type="submit" style="display: none"
+        div id="title_div"
+          h1 = @current_day.name
+
+      -if @user
+        -if @user_categories
+          - for category in @user_categories.categories
+            div class="todo"
+              div class="todo_item_header"
+                div class="todo_title"
+                  h1=category.name
+                div class="delete_todo"
+                  form name="removeForm" action="/category/#{category.id}/remove" method="post"
+                    input type="submit" value="-"
+
+              div class="todos"
+                - for item in category.items
+                  div class="todo_item"
+                    div class="todo_item_content"
+                      div class="item_checkbox"
+                        //a class="checkbox_test" cb
+                      div class="item_text_content"
+                        a class="item_text"=item.name
+                      div class="delete_item"
+                        form name="removeItem" action="/item/#{item.id}/remove" method="post"
+                          input type="submit" value="-"
+                      div class="clear"
+                div id="add_item_div_#{category.id}" class="add_item_div"
+                  form action="/category/#{category.id}/item/create" method="post"
+                    input class="add_item_form" type="text" name="message" placeholder="                add item"
+
+                div class="add_item"
+                  h1 onClick="showAddItemDiv(#{category.id})" class="plus" +
+
+  javascript: type="text/javascript"
+    $(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+      // Calling Login Form
+      $(".mdl-badge").click(function () {
+        $(".mdl-active").removeClass('mdl-active').addClass('mdl-badge');
+        $(this).removeClass('mdl-badge').addClass('mdl-active');
+        var id = $(this).attr('id');
+        var formId = "form_"+id;
+        $("#"+formId).submit();
+        return false;
+      });
+    })
